@@ -28,6 +28,11 @@ import com.bcan.switchfi.ui.theme.ThemeViewModel
 import com.bcan.switchfi.ui.i18n.LocaleViewModel
 import com.bcan.switchfi.ui.i18n.applyAppLocale
 import java.util.Locale
+import com.bcan.switchfi.data.suggestions.WifiSuggestionRepository
+import com.bcan.switchfi.domain.model.KnownNetwork
+import com.bcan.switchfi.domain.model.SecurityType
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 object NetworksContract {
     data class State(
