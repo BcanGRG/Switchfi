@@ -16,6 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Optional: snapshots or additional feeds can be added here
     }
 }
 

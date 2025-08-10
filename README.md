@@ -17,6 +17,8 @@
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
+ - [Theme](#theme)
+ - [Localization](#localization)
 
 ## Features
 - 🔁 **Auto‑switch to strongest known Wi‑Fi** using the platform’s Wi‑Fi Suggestions API (user‑approved, policy‑compliant).
@@ -58,6 +60,14 @@ graph TD
 - MVI primitives: `UiState`, `UiEvent`, `UiEffect` with reducer/intent flow.
 - Clean separation of concerns across `ui/`, `domain/`, `data/`, optional `core/` utilities.
 
+## Theme
+- Light/Dark mode with Material 3 and dynamic color (Android 12+).
+- User preference persisted via DataStore (`ThemeRepository`, `ThemeViewModel`).
+
+## Localization
+- English and Turkish resources under `values/` and `values-tr/`.
+- App language switcher (runtime) backed by DataStore; uses `AppCompatDelegate.setApplicationLocales` on AndroidX.
+
 ## Requirements
 - Android Studio Giraffe or newer
 - Min SDK 26+ (TBD), Target SDK latest stable
@@ -66,9 +76,11 @@ graph TD
   - < API 33: `ACCESS_FINE_LOCATION`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`
 
 ## Roadmap
-- [ ] Project setup (Gradle, modules, MVI base)
-- [ ] Permissions & onboarding
-- [ ] Type‑safe Navigation graph
+- [x] Project setup (Gradle, modules, MVI base)
+- [x] Permissions & onboarding
+- [x] Type‑safe Navigation graph
+- [x] Light/Dark theme with preference
+- [x] Localization (TR-ENG)
 - [ ] Wi‑Fi Suggestions repository
 - [ ] Background switching strategy
 - [ ] Scan & measure (RSSI)

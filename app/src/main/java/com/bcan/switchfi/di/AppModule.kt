@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
+import com.bcan.switchfi.ui.theme.ThemeRepository
+import com.bcan.switchfi.ui.i18n.LocaleRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +24,14 @@ object AppModule {
     @Singleton
     fun provideConnectivityManager(app: Application): ConnectivityManager =
         app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    @Provides
+    @Singleton
+    fun provideThemeRepository(app: Application): ThemeRepository = ThemeRepository(app)
+
+    @Provides
+    @Singleton
+    fun provideLocaleRepository(app: Application): LocaleRepository = LocaleRepository(app)
 }
 
 
