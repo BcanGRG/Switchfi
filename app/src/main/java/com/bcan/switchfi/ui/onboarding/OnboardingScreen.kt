@@ -13,16 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.bcan.switchfi.R
-import com.bcan.switchfi.ui.permission.isGrantedCompat
-import com.bcan.switchfi.ui.permission.rememberWifiPermission
+import com.bcan.switchfi.ui.permission.allGranted
+import com.bcan.switchfi.ui.permission.rememberWifiPermissionsState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun OnboardingScreen(onContinue: () -> Unit) {
-    val wifiPermission = rememberWifiPermission()
-    val hasPermission = wifiPermission.isGrantedCompat()
+    val wifiPermission = rememberWifiPermissionsState()
+    val hasPermission = wifiPermission.allGranted()
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -32,7 +31,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
         Text(text = stringResource(id = R.string.onboarding_permission_title))
 
         if (!hasPermission) {
-            Button(onClick = { wifiPermission.launchPermissionRequest() }) {
+            Button(onClick = { wifiPermission.launchMultiplePermissionRequest() }) {
                 Text(stringResource(id = R.string.btn_grant_permission))
             }
         } else {
