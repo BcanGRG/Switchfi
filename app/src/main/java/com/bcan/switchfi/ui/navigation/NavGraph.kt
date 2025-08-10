@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import com.bcan.switchfi.ui.NetworksScreen
 import com.bcan.switchfi.ui.onboarding.OnboardingScreen
+import com.bcan.switchfi.ui.detail.NetworkDetailScreen
 
 @Serializable object OnboardingRoute
 @Serializable object NetworksRoute
@@ -24,7 +25,7 @@ fun AppNavGraph(navController: NavHostController) {
         composable<NetworksRoute> { NetworksScreen() }
         composable<NetworkDetailRoute> { backStackEntry ->
             val args = backStackEntry.toRoute<NetworkDetailRoute>()
-            // TODO: NetworkDetailScreen(args)
+            NetworkDetailScreen(ssid = args.ssid)
         }
     }
 }

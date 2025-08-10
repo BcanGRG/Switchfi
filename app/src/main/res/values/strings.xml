@@ -8,4 +8,9 @@
 
     <!-- Networks -->
     <string name="networks_count">Networks: %1$d</string>
+    <string name="title_networks">Networks</string>
+    <string name="title_network_detail">Network Detail</string>
+    <string name="label_signal_strength">Signal</string>
+    <string name="label_security">Security</string>
+    <string name="ssid_unknown">Unknown SSID</string>
 </resources>

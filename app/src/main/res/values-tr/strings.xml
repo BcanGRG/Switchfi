@@ -8,5 +8,10 @@
 
     <!-- Networks -->
     <string name="networks_count">Ağlar: %1$d</string>
+    <string name="title_networks">Ağlar</string>
+    <string name="title_network_detail">Ağ Detayı</string>
+    <string name="label_signal_strength">Sinyal</string>
+    <string name="label_security">Güvenlik</string>
+    <string name="ssid_unknown">Bilinmeyen SSID</string>
 </resources>
 
