@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,6 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bcan.switchfi.R
 import com.bcan.switchfi.core.mvi.MviViewModel
@@ -33,6 +39,9 @@ import com.bcan.switchfi.domain.model.KnownNetwork
 import com.bcan.switchfi.domain.model.SecurityType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bcan.switchfi.ui.permission.allGranted
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 
 object NetworksContract {
     data class State(
@@ -57,7 +66,7 @@ class NetworksViewModel : MviViewModel<NetworksContract.State, NetworksContract.
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun NetworksScreen(
     vm: NetworksViewModel = viewModel(),
@@ -65,14 +74,19 @@ fun NetworksScreen(
     localeVm: LocaleViewModel = hiltViewModel()
 ) {
     val state by vm.state.collectAsState()
+    val permissions = com.bcan.switchfi.ui.permission.rememberWifiPermissions()
+    val hasAllPermissions = permissions.allGranted()
     Scaffold(
         topBar = {
             LargeTopAppBar(
                 title = { Text(stringResource(id = R.string.title_networks)) },
                 actions = {
+                    IconButton(onClick = { vm.onEvent(NetworksContract.Event.OnAppear) }) {
+                        Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh")
+                    }
                     IconButton(onClick = { themeVm.setDarkMode(!themeVm.isDark.value) }) {
                         Icon(
-                            painter = painterResource(id = if (themeVm.isDark.value) android.R.drawable.btn_star_big_on else android.R.drawable.btn_star_big_off),
+                            imageVector = if (themeVm.isDark.value) Icons.Default.LightMode else Icons.Default.DarkMode,
                             contentDescription = "Toggle theme"
                         )
                     }
@@ -81,25 +95,34 @@ fun NetworksScreen(
                         localeVm.setLocale(next)
                         applyAppLocale(tag = next.toLanguageTag())
                     }) {
-                        Icon(
-                            painter = painterResource(id = android.R.drawable.ic_menu_sort_by_size),
-                            contentDescription = "Toggle language"
-                        )
+                        Icon(imageVector = Icons.Default.Language, contentDescription = "Toggle language")
                     }
                 }
             )
         }
     ) { innerPadding ->
-        Box(
+        com.google.accompanist.swiperefresh.SwipeRefresh(
+            state = com.google.accompanist.swiperefresh.rememberSwipeRefreshState(isRefreshing = state.isLoading),
+            onRefresh = { vm.onEvent(NetworksContract.Event.OnAppear) },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
+                .padding(innerPadding)
         ) {
-            if (state.isLoading) {
-                CircularProgressIndicator()
-            } else {
-                Text(text = stringResource(id = R.string.networks_count, state.networksCount))
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                when {
+                    !hasAllPermissions -> {
+                        IconButton(onClick = {
+                            permissions.forEach { if (!it.status.isGranted) it.launchPermissionRequest() }
+                        }) {
+                            Text(text = stringResource(id = R.string.btn_grant_permission))
+                        }
+                    }
+                    state.isLoading -> CircularProgressIndicator()
+                    else -> Text(text = stringResource(id = R.string.networks_count, state.networksCount))
+                }
             }
         }
     }

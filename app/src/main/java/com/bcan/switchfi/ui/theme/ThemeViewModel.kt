@@ -13,13 +13,15 @@ import javax.inject.Inject
 class ThemeViewModel @Inject constructor(
     private val themeRepository: ThemeRepository
 ) : ViewModel() {
-    val isDark: StateFlow<Boolean> = themeRepository.isDarkMode.stateIn(
+    private val state: StateFlow<Boolean> = themeRepository.isDarkMode.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = false
     )
+    val isDark: StateFlow<Boolean> get() = state
 
     fun setDarkMode(enabled: Boolean) {
+        // Optimistic update by writing immediately; collector will emit same value
         viewModelScope.launch { themeRepository.setDarkMode(enabled) }
     }
 }
