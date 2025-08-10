@@ -11,11 +11,9 @@
 
 ## Contents
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Requirements](#requirements)
-- [Getting Started](#getting-started)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -26,13 +24,6 @@
 - 📡 **Networks screen** listing current / known / nearby SSIDs with RSSI levels.
 - 🔍 **Detail view** for each network: security type, signal trend, suggestion management.
 - 🧭 **Single‑Activity + type‑safe Compose Navigation** (Navigation 2.8+).
-
-## Screenshots
-> Place screenshots under `docs/images/` and update the paths below when available.
-
-| Networks | Detail |
-|---|---|
-| <img src="docs/images/networks.png" width="320" alt="Networks"/> | <img src="docs/images/detail.png" width="320" alt="Detail"/> |
 
 ## Tech Stack
 | Layer | Choice |
@@ -46,9 +37,9 @@
 
 ## Architecture
 ```mermaid
-flowchart TD
-  subgraph UI[UI (Jetpack Compose)]
-    VMs[ViewModels (MVI)] --> UiState
+graph TD
+  subgraph UI[UI - Jetpack Compose]
+    VMs[ViewModels - MVI] --> UIState[UiState]
     UiEvent --> VMs
   end
   subgraph Domain[Domain]
@@ -56,7 +47,7 @@ flowchart TD
   end
   subgraph Data[Data]
     Repo[Repositories]
-    Src[Android Services (WifiManager, ConnectivityManager)]
+    Src[Android Services: WifiManager, ConnectivityManager]
   end
 
   VMs <--> UseCases
@@ -73,21 +64,6 @@ flowchart TD
 - Permissions (subject to SDK level):
   - API 33+: `NEARBY_WIFI_DEVICES`, `ACCESS_FINE_LOCATION`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`
   - < API 33: `ACCESS_FINE_LOCATION`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`
-
-## Getting Started
-```bash
-./gradlew clean assembleDebug
-```
-
-Project structure suggestion (to be refined as we build):
-```
-app/
-  src/main/java/com/bcan/switchfi/
-    core/
-    data/
-    domain/
-    ui/
-```
 
 ## Roadmap
 - [ ] Project setup (Gradle, modules, MVI base)
