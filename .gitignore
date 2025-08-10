@@ -1,15 +1,94 @@
-*.iml
-.gradle
+########################################
+# Android / Kotlin / Jetpack Compose   #
+# Comprehensive .gitignore              #
+########################################
+
+# Gradle
+.gradle/
+**/build/
+out/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration
+local.properties
 /local.properties
+keystore.properties
+signing.properties
+
+# Android Studio / IntelliJ IDEA
+*.iml
+.idea/
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+# Keep project code style if needed (uncomment to keep)
+#!.idea/codeStyles/
+#!.idea/codeStyles/Project.xml
+#!.idea/codeStyles/codeStyleConfig.xml
+
+# OS / Editor noise
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+Thumbs.db
+*.log
+
+# APK / App bundles / Artifacts
+*.apk
+*.aab
+*.ap_
+*.aar
+*.jar
+*.dex
+*.class
+
+# NDK / CMake
+.externalNativeBuild/
+.cxx/
+obj/
+
+# Captures
+captures/
+
+# Kotlin
+.kotlin
+.kotlinc/
+
+# Compose metrics & reports (opt-in via compiler flags)
+compose-metrics/
+compose-reports/
+
+# Signing keys (never commit real keys)
+*.keystore
+*.jks
+*.pem
+*.p12
+
+# Lint / Reports / Coverage
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+**/reports/
+**/test-results/
+**/coverage/
+**/jacoco/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/readme.md
+
+# Firebase/Crashlytics (adjust as needed)
+crashlytics-build.properties
+**/fabric/
+**/crashlytics-build.properties
+
+# Misc
+.idea/sonarlint/
+.vscode/
+.history/
