@@ -6,12 +6,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.bcan.switchfi.R
 import com.bcan.switchfi.ui.permission.isGrantedCompat
 import com.bcan.switchfi.ui.permission.rememberWifiPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -28,18 +29,15 @@ fun OnboardingScreen(onContinue: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Switchfi needs Wi‑Fi permissions to suggest and monitor networks.",
-            style = MaterialTheme.typography.titleMedium
-        )
+        Text(text = stringResource(id = R.string.onboarding_permission_title))
 
         if (!hasPermission) {
             Button(onClick = { wifiPermission.launchPermissionRequest() }) {
-                Text("Grant permission")
+                Text(stringResource(id = R.string.btn_grant_permission))
             }
         } else {
             Button(onClick = onContinue) {
-                Text("Continue")
+                Text(stringResource(id = R.string.btn_continue))
             }
         }
     }

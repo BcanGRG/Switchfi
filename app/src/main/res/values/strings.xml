@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Switchfi</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_permission_title">Switchfi needs Wi‑Fi permissions to suggest and monitor networks.</string>
+    <string name="btn_grant_permission">Grant permission</string>
+    <string name="btn_continue">Continue</string>
+
+    <!-- Networks -->
+    <string name="networks_count">Networks: %1$d</string>
 </resources>
