@@ -48,6 +48,10 @@ import com.bcan.switchfi.ui.permission.allGranted
 import com.bcan.switchfi.ui.permission.rememberWifiPermissionsState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.bcan.switchfi.data.worker.AutoSwitchWorker
 
 object NetworksContract {
     data class State(
@@ -163,6 +167,15 @@ fun NetworksScreen(
                     }
                 }
                 else -> {
+                    // Schedule a one-off evaluation in background (lightweight)
+                    val ctx = androidx.compose.ui.platform.LocalContext.current
+                    androidx.compose.runtime.SideEffect {
+                        WorkManager.getInstance(ctx).enqueueUniqueWork(
+                            "auto-switch-eval",
+                            ExistingWorkPolicy.REPLACE,
+                            OneTimeWorkRequestBuilder<AutoSwitchWorker>().build()
+                        )
+                    }
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(state.items) { item ->
                             ListItem(
