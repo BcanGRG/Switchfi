@@ -2,6 +2,7 @@ package com.bcan.switchfi.data.scan
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -32,13 +33,24 @@ class WifiScanner @Inject constructor(
     }
 
     fun startScan(): Boolean {
-        if (!hasScanPermission()) return false
+        if (!hasScanPermission() || !isLocationEnabled()) return false
+        @Suppress("DEPRECATION")
         return runCatching { wifiManager.startScan() }.getOrDefault(false)
     }
 
     fun getScanResults(): List<ScanResult> {
-        if (!hasScanPermission()) return emptyList()
-        return runCatching { wifiManager.scanResults.orEmpty() }.getOrElse { emptyList() }
+        if (!hasScanPermission() || !isLocationEnabled()) return emptyList()
+        return try {
+            wifiManager.scanResults.orEmpty()
+        } catch (_: SecurityException) {
+            emptyList()
+        }
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return runCatching { lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) }
+            .getOrDefault(false)
     }
 
     fun rssiToLevel(rssi: Int): Int {

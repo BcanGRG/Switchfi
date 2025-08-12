@@ -48,6 +48,9 @@ import com.bcan.switchfi.ui.permission.allGranted
 import com.bcan.switchfi.ui.permission.rememberWifiPermissionsState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
+import android.provider.Settings
+import androidx.compose.ui.platform.LocalContext
+import com.bcan.switchfi.ui.util.isLocationEnabled
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -109,6 +112,7 @@ fun NetworksScreen(
     val isDark by themeVm.isDark.collectAsState()
     val permissionsState = rememberWifiPermissionsState()
     val hasAllPermissions = permissionsState.allGranted()
+    val context = LocalContext.current
 
     LaunchedEffect(hasAllPermissions) {
         if (hasAllPermissions) vm.onEvent(NetworksContract.Event.Refresh)
@@ -156,6 +160,7 @@ fun NetworksScreen(
                         }
                     }
                 }
+
                 state.isLoading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
@@ -163,7 +168,13 @@ fun NetworksScreen(
                 }
                 state.items.isEmpty() -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = stringResource(id = R.string.networks_count, 0))
+                        if (!isLocationEnabled(context)) {
+                            androidx.compose.material3.TextButton(onClick = {
+                                runCatching { context.startActivity(android.content.Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
+                            }) { Text(text = stringResource(id = R.string.msg_enable_location)) }
+                        } else {
+                            Text(text = stringResource(id = R.string.networks_count, 0))
+                        }
                     }
                 }
                 else -> {
