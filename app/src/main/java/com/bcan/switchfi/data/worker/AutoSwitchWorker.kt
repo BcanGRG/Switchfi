@@ -13,6 +13,7 @@ import com.bcan.switchfi.domain.usecase.NearbyNetwork
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
+import com.bcan.switchfi.ui.settings.SettingsRepository
 
 @HiltWorker
 class AutoSwitchWorker @AssistedInject constructor(
@@ -20,12 +21,15 @@ class AutoSwitchWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val knownRepo: KnownNetworksRepository,
     private val scanner: WifiScanner,
-    private val suggestions: WifiSuggestionRepository
+    private val suggestions: WifiSuggestionRepository,
+    private val settings: SettingsRepository
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
         if (!scanner.hasScanPermission()) return Result.success()
 
         val known = knownRepo.knownNetworks.firstOrNull() ?: emptyList()
+        val rssi = settings.rssiThreshold.firstOrNull() ?: -75
+        val hyst = settings.hysteresis.firstOrNull() ?: 8
 
         scanner.startScan()
         val results = scanner.getScanResults()
@@ -33,7 +37,7 @@ class AutoSwitchWorker @AssistedInject constructor(
 
         val usecase = EvaluateAutoSwitchUseCase()
         val eval = usecase.invoke(
-            EvaluateSwitchInput(currentRssi = null, nearby = nearby, known = known)
+            EvaluateSwitchInput(currentRssi = null, nearby = nearby, known = known, rssiThreshold = rssi, hysteresis = hyst)
         )
         if (eval.shouldSuggest && eval.targetSsid != null) {
             // Re-suggest known networks; platform handles the actual handoff.

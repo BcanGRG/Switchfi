@@ -20,13 +20,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import com.bcan.switchfi.data.known.KnownNetworksRepository
 import com.bcan.switchfi.domain.model.KnownNetwork
 import com.bcan.switchfi.domain.model.SecurityType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class KnownUi(val ssid: String, val security: SecurityType)
@@ -35,12 +38,9 @@ data class KnownUi(val ssid: String, val security: SecurityType)
 class KnownNetworksViewModel @Inject constructor(
     private val repo: KnownNetworksRepository
 ) : androidx.lifecycle.ViewModel() {
-    val items: StateFlow<List<KnownUi>> = repo.knownNetworks.stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList()
-    ).let { flow ->
-        kotlinx.coroutines.flow.map(flow) { list -> list.map { KnownUi(it.ssid, it.securityType) } }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-    }
+    val items: StateFlow<List<KnownUi>> = repo.knownNetworks
+        .map { list -> list.map { KnownUi(it.ssid, it.securityType) } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun add(ssid: String, psk: String?, sec: SecurityType) =
         viewModelScope.launch { repo.add(KnownNetwork(ssid, sec, psk)) }

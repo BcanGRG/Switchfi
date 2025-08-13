@@ -9,6 +9,7 @@ import com.bcan.switchfi.ui.i18n.LocaleRepository
 import com.bcan.switchfi.data.suggestions.WifiSuggestionRepository
 import com.bcan.switchfi.data.scan.WifiScanner
 import com.bcan.switchfi.data.scan.ScanResultsRepository
+import com.bcan.switchfi.ui.settings.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,6 +50,10 @@ object AppModule {
     @Singleton
     fun provideScanResultsRepository(app: Application, wifiManager: WifiManager): ScanResultsRepository =
         ScanResultsRepository(app, wifiManager)
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(app: Application): SettingsRepository = SettingsRepository(app)
 }
 
 

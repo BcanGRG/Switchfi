@@ -19,6 +19,8 @@
 - [License](#license)
  - [Theme](#theme)
  - [Localization](#localization)
+ - [Settings](#settings)
+ - [Known Networks](#known-networks)
 
 ## Features
 - 🔁 **Auto‑switch to strongest known Wi‑Fi** using the platform’s Wi‑Fi Suggestions API (user‑approved, policy‑compliant).
@@ -67,6 +69,14 @@ graph TD
 ## Localization
 - English and Turkish resources under `values/` and `values-tr/`.
 - App language switcher (runtime) backed by DataStore; uses `AppCompatDelegate.setApplicationLocales` on AndroidX.
+
+## Settings
+- RSSI threshold and hysteresis for auto-switch evaluation (DataStore-backed).
+- Theme toggle available.
+
+## Known Networks
+- Add/remove known SSIDs (open/WPA2); persisted via DataStore.
+- Suggestions synced with the list for platform-driven handoff.
 
 ## Requirements
 - Android Studio Giraffe or newer

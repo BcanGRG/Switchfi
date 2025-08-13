@@ -17,21 +17,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bcan.switchfi.ui.theme.ThemeViewModel
+import com.bcan.switchfi.ui.settings.SettingsViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(themeVm: ThemeViewModel = hiltViewModel()) {
+@Composable
+fun SettingsScreen(themeVm: ThemeViewModel = hiltViewModel(), settingsVm: SettingsViewModel = hiltViewModel()) {
     val isDark by themeVm.isDark.collectAsState()
+    val rssi by settingsVm.rssiThreshold.collectAsState()
+    val hyst by settingsVm.hysteresis.collectAsState()
     Scaffold(topBar = { LargeTopAppBar(title = { Text("Settings") }) }) { inner ->
         Column(Modifier.fillMaxSize().padding(inner).padding(16.dp)) {
             Text(text = "Theme")
             androidx.compose.material3.Switch(checked = isDark, onCheckedChange = { themeVm.setDarkMode(it) })
 
-            // Placeholders for RSSI threshold and hysteresis
             Text("RSSI threshold (dBm)")
-            OutlinedTextField(value = "-75", onValueChange = {}, modifier = Modifier)
+            OutlinedTextField(value = rssi.toString(), onValueChange = { it.toIntOrNull()?.let(settingsVm::setRssiThreshold) })
             Text("Hysteresis (dB)")
-            OutlinedTextField(value = "8", onValueChange = {}, modifier = Modifier)
+            OutlinedTextField(value = hyst.toString(), onValueChange = { it.toIntOrNull()?.let(settingsVm::setHysteresis) })
         }
     }
 }
