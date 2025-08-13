@@ -26,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Composable
 fun SettingsScreen(themeVm: ThemeViewModel = hiltViewModel(), settingsVm: SettingsViewModel = hiltViewModel()) {
     val isDark by themeVm.isDark.collectAsState()
     val rssi by settingsVm.rssiThreshold.collectAsState()

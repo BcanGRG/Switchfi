@@ -56,6 +56,11 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bcan.switchfi.data.worker.AutoSwitchWorker
+import com.bcan.switchfi.data.scan.WifiStateRepository
+import com.bcan.switchfi.data.known.KnownNetworksRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 object NetworksContract {
     data class State(
@@ -75,10 +80,18 @@ data class UiNetwork(val ssid: String, val level: Int)
 @HiltViewModel
 class NetworksViewModel @javax.inject.Inject constructor(
     private val scanner: WifiScanner,
-    private val scans: ScanResultsRepository
+    private val scans: ScanResultsRepository,
+    private val wifiStateRepo: WifiStateRepository,
+    private val knownRepo: KnownNetworksRepository
 ) : MviViewModel<NetworksContract.State, NetworksContract.Event, NetworksContract.Effect>(
     initialState = NetworksContract.State()
 ) {
+    val wifiEnabled = wifiStateRepo.isWifiEnabledFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+    val knownSsids = knownRepo.knownNetworks
+        .map { list -> list.map { it.ssid }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptySet())
     override fun onEvent(event: NetworksContract.Event) {
         when (event) {
             NetworksContract.Event.Refresh -> refresh()
@@ -112,6 +125,8 @@ fun NetworksScreen(
     val isDark by themeVm.isDark.collectAsState()
     val permissionsState = rememberWifiPermissionsState()
     val hasAllPermissions = permissionsState.allGranted()
+    val wifiEnabled by vm.wifiEnabled.collectAsState()
+    val knownSet by vm.knownSsids.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(hasAllPermissions) {
@@ -135,7 +150,7 @@ fun NetworksScreen(
                         )
                     }
                     IconButton(onClick = {
-                        val next = if (localeVm.localeTag.value == "tr" ) java.util.Locale.ENGLISH else java.util.Locale("tr")
+                        val next = if (localeVm.localeTag.value?.startsWith("tr") == true) java.util.Locale.ENGLISH else java.util.Locale("tr")
                         localeVm.setLocale(next)
                         applyAppLocale(tag = next.toLanguageTag())
                     }) {
@@ -157,7 +172,7 @@ fun NetworksScreen(
                         }
                     }
                 }
-                !com.bcan.switchfi.ui.util.isWifiEnabled(context) -> {
+                !wifiEnabled -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         androidx.compose.material3.TextButton(onClick = { com.bcan.switchfi.ui.util.openWifiSettings(context) }) {
                             Text(text = stringResource(id = R.string.btn_turn_on_wifi))
@@ -195,7 +210,7 @@ fun NetworksScreen(
                         items(state.items) { item ->
                             ListItem(
                                 headlineContent = {
-                                    val isKnown = false // TODO bind with KnownNetworksRepository
+                                    val isKnown = knownSet.contains(item.ssid)
                                     Text(text = if (isKnown) "★ ${item.ssid}" else item.ssid)
                                 },
                                 supportingContent = {
