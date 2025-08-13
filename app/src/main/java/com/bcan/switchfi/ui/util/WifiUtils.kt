@@ -2,14 +2,18 @@ package com.bcan.switchfi.ui.util
 
 import android.content.Context
 import android.content.Intent
-import android.net.wifi.WifiManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.provider.Settings
 
 fun isWifiEnabled(context: Context): Boolean {
-    val wm = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-    @Suppress("DEPRECATION")
-    return wm.isWifiEnabled
+    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networks = cm.allNetworks
+    return networks.any { net ->
+        val caps = cm.getNetworkCapabilities(net)
+        caps?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+    }
 }
 
 fun openWifiSettings(context: Context) {

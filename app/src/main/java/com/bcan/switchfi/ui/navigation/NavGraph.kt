@@ -9,9 +9,13 @@ import kotlinx.serialization.Serializable
 import com.bcan.switchfi.ui.NetworksScreen
 import com.bcan.switchfi.ui.detail.NetworkDetailScreen
 import com.bcan.switchfi.ui.onboarding.OnboardingScreen
+import com.bcan.switchfi.ui.settings.SettingsScreen
+import com.bcan.switchfi.ui.known.KnownNetworksScreen
 
 @Serializable object OnboardingRoute
 @Serializable object NetworksRoute
+@Serializable object SettingsRoute
+@Serializable object KnownNetworksRoute
 
 @Serializable
 data class NetworkDetailRoute(val ssid: String)
@@ -23,6 +27,8 @@ fun AppNavGraph(navController: NavHostController) {
             OnboardingScreen(onContinue = { navController.navigate(NetworksRoute) { popUpTo(OnboardingRoute) { inclusive = true } } })
         }
         composable<NetworksRoute> { NetworksScreen() }
+        composable<SettingsRoute> { SettingsScreen() }
+        composable<KnownNetworksRoute> { KnownNetworksScreen() }
         composable<NetworkDetailRoute> { backStackEntry ->
             val args = backStackEntry.toRoute<NetworkDetailRoute>()
             NetworkDetailScreen(ssid = args.ssid)
