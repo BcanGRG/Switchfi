@@ -120,7 +120,10 @@ fun NetworksScreen(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { Text(stringResource(id = R.string.title_networks)) },
+                title = {
+                    val count = state.items.size
+                    Text(text = stringResource(id = R.string.title_networks) + if (count > 0) "  ($count)" else "")
+                },
                 actions = {
                     IconButton(onClick = { vm.onEvent(NetworksContract.Event.Refresh) }) {
                         Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh")
@@ -142,13 +145,7 @@ fun NetworksScreen(
             )
         }
     ) { innerPadding ->
-        com.google.accompanist.swiperefresh.SwipeRefresh(
-            state = com.google.accompanist.swiperefresh.rememberSwipeRefreshState(isRefreshing = state.isLoading),
-            onRefresh = { vm.onEvent(NetworksContract.Event.Refresh) },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when {
                 !hasAllPermissions -> {
                     Box(
@@ -157,6 +154,13 @@ fun NetworksScreen(
                     ) {
                         IconButton(onClick = { permissionsState.launchMultiplePermissionRequest() }) {
                             Text(text = stringResource(id = R.string.btn_grant_permission))
+                        }
+                    }
+                }
+                !com.bcan.switchfi.ui.util.isWifiEnabled(context) -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        androidx.compose.material3.TextButton(onClick = { com.bcan.switchfi.ui.util.openWifiSettings(context) }) {
+                            Text(text = stringResource(id = R.string.btn_turn_on_wifi))
                         }
                     }
                 }
@@ -190,7 +194,10 @@ fun NetworksScreen(
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(state.items) { item ->
                             ListItem(
-                                headlineContent = { Text(item.ssid) },
+                                headlineContent = {
+                                    val isKnown = false // TODO bind with KnownNetworksRepository
+                                    Text(text = if (isKnown) "★ ${item.ssid}" else item.ssid)
+                                },
                                 supportingContent = {
                                     StrengthBar(level = item.level, modifier = Modifier.fillMaxWidth())
                                 }

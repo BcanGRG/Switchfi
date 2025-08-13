@@ -16,4 +16,5 @@
     <string name="msg_no_permission">Wi‑Fi scan requires permission.</string>
     <string name="msg_enable_location">Turn on device location to see nearby Wi‑Fi networks.</string>
     <string name="btn_open_settings">Open settings</string>
+    <string name="btn_turn_on_wifi">Turn on Wi‑Fi</string>
 </resources>
