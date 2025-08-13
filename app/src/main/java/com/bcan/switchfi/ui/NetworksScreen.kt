@@ -39,6 +39,7 @@ import com.bcan.switchfi.ui.i18n.LocaleViewModel
 import com.bcan.switchfi.ui.i18n.applyAppLocale
 import java.util.Locale
 import com.bcan.switchfi.data.scan.WifiScanner
+import com.bcan.switchfi.data.scan.ScanResultsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import androidx.compose.material3.ListItem
@@ -73,7 +74,8 @@ data class UiNetwork(val ssid: String, val level: Int)
 
 @HiltViewModel
 class NetworksViewModel @javax.inject.Inject constructor(
-    private val scanner: WifiScanner
+    private val scanner: WifiScanner,
+    private val scans: ScanResultsRepository
 ) : MviViewModel<NetworksContract.State, NetworksContract.Event, NetworksContract.Effect>(
     initialState = NetworksContract.State()
 ) {
@@ -86,16 +88,14 @@ class NetworksViewModel @javax.inject.Inject constructor(
     private fun refresh() {
         setState { copy(isLoading = true) }
         viewModelScope.launch {
-            runCatching {
-                val results = if (scanner.startScan()) scanner.getScanResults() else emptyList()
-                results
+            // Start a scan (legacy trigger), and observe results via broadcast
+            scanner.startScan()
+            scans.observeScanResults().collect { results ->
+                val list = results
                     .filter { it.SSID.isNotBlank() }
                     .sortedByDescending { it.level }
                     .map { UiNetwork(ssid = it.SSID, level = scanner.rssiToLevel(it.level)) }
-            }.onSuccess { list ->
                 setState { copy(isLoading = false, items = list) }
-            }.onFailure {
-                setState { copy(isLoading = false, items = emptyList()) }
             }
         }
     }

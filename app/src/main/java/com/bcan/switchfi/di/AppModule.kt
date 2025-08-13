@@ -8,6 +8,7 @@ import com.bcan.switchfi.ui.theme.ThemeRepository
 import com.bcan.switchfi.ui.i18n.LocaleRepository
 import com.bcan.switchfi.data.suggestions.WifiSuggestionRepository
 import com.bcan.switchfi.data.scan.WifiScanner
+import com.bcan.switchfi.data.scan.ScanResultsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,6 +44,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideWifiScanner(app: Application, wifiManager: WifiManager): WifiScanner = WifiScanner(app, wifiManager)
+
+    @Provides
+    @Singleton
+    fun provideScanResultsRepository(app: Application, wifiManager: WifiManager): ScanResultsRepository =
+        ScanResultsRepository(app, wifiManager)
 }
 
 
