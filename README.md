@@ -13,14 +13,14 @@
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
+- [Theme](#theme)
+- [Localization](#localization)
+- [Settings](#settings)
+- [Known Networks](#known-networks)
 - [Requirements](#requirements)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
- - [Theme](#theme)
- - [Localization](#localization)
- - [Settings](#settings)
- - [Known Networks](#known-networks)
 
 ## Features
 - 🔁 **Auto‑switch to strongest known Wi‑Fi** using the platform’s Wi‑Fi Suggestions API (user‑approved, policy‑compliant).
@@ -90,13 +90,15 @@ graph TD
 - [x] Permissions & onboarding
 - [x] Type‑safe Navigation graph
 - [x] Light/Dark theme with preference
-- [x] Localization (TR-ENG)
-- [ ] Wi‑Fi Suggestions repository
-- [ ] Background switching strategy
-- [ ] Scan & measure (RSSI)
-- [ ] Networks list screen
-- [ ] Network detail screen
-- [ ] Settings / Known networks
+- [x] Localization (TR/EN)
+- [x] Scan & measure (RSSI) via broadcast flow
+- [x] Bottom navigation (Networks / Known / Settings)
+- [x] Known networks management (basic)
+- [x] Settings (theme, RSSI/hysteresis, language)
+- [x] Network detail screen (add/remove known)
+- [ ] Wi‑Fi Suggestions auto-switch optimization
+- [ ] Auto-learn known networks (from connected SSIDs)
+- [ ] Background periodic evaluation & logging
 - [ ] Tests & CI
 
 ## Contributing
