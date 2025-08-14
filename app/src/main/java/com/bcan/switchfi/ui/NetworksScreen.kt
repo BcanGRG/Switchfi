@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -56,6 +58,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bcan.switchfi.data.worker.AutoSwitchWorker
+import com.bcan.switchfi.ui.navigation.NetworkDetailRoute
 import com.bcan.switchfi.data.scan.WifiStateRepository
 import com.bcan.switchfi.data.known.KnownNetworksRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -120,6 +123,7 @@ fun NetworksScreen(
     vm: NetworksViewModel = hiltViewModel(),
     themeVm: ThemeViewModel = hiltViewModel(),
     localeVm: LocaleViewModel = hiltViewModel(),
+    navController: NavController = androidx.navigation.compose.rememberNavController(),
 ) {
     val state by vm.state.collectAsState()
     val isDark by themeVm.isDark.collectAsState()
@@ -215,7 +219,10 @@ fun NetworksScreen(
                                 },
                                 supportingContent = {
                                     StrengthBar(level = item.level, modifier = Modifier.fillMaxWidth())
-                                }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { navController.navigate(NetworkDetailRoute(item.ssid)) }
                             )
                         }
                     }
