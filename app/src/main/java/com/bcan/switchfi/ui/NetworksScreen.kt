@@ -52,6 +52,7 @@ import com.bcan.switchfi.ui.permission.rememberWifiPermissionsState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import android.provider.Settings
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.platform.LocalContext
 import com.bcan.switchfi.ui.util.isLocationEnabled
 import androidx.work.ExistingWorkPolicy
