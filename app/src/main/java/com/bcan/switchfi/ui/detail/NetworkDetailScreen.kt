@@ -25,9 +25,8 @@ import com.bcan.switchfi.domain.model.SecurityType
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NetworkDetailScreen(ssid: String?) {
-    val knownRepo: KnownNetworksRepository = androidx.hilt.navigation.compose.hiltViewModel()
-    val known by knownRepo.knownNetworks.collectAsState(initial = emptyList())
-    val isKnown = ssid != null && known.any { it.ssid == ssid }
+    val vm: NetworkDetailViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+    val isKnown by vm.isKnown.collectAsState()
 
     Scaffold(topBar = {
         LargeTopAppBar(title = { Text(text = stringResource(id = R.string.title_network_detail)) })
@@ -36,28 +35,11 @@ fun NetworkDetailScreen(ssid: String?) {
             modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            ListItem(headlineContent = { Text(text = ssid ?: stringResource(id = R.string.ssid_unknown)) }, supportingContent = { Text(text = if (isKnown) "★ Known" else "Unknown") })
+            ListItem(headlineContent = { Text(text = vm.ssid.ifBlank { stringResource(id = R.string.ssid_unknown) }) }, supportingContent = { Text(text = if (isKnown) "★ Known" else "Unknown") })
             Button(onClick = {
-                if (ssid != null) {
-                    if (!isKnown) {
-                        androidx.lifecycle.viewmodel.compose.viewModel<DetailHelperVm>().addKnown(ssid)
-                    } else {
-                        androidx.lifecycle.viewmodel.compose.viewModel<DetailHelperVm>().removeKnown(ssid)
-                    }
-                }
+                if (!isKnown) vm.addToKnown() else vm.removeFromKnown()
             }) { Text(text = if (isKnown) "Remove from Known" else "Add to Known") }
         }
-    }
-}
-
-class DetailHelperVm @javax.inject.Inject constructor(
-    private val repo: KnownNetworksRepository
-) : androidx.lifecycle.ViewModel() {
-    fun addKnown(ssid: String) = androidx.lifecycle.viewModelScope.launch {
-        repo.add(KnownNetwork(ssid, SecurityType.OPEN, null))
-    }
-    fun removeKnown(ssid: String) = androidx.lifecycle.viewModelScope.launch {
-        repo.removeBySsid(ssid)
     }
 }
 
