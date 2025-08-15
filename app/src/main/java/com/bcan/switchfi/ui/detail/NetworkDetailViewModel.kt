@@ -7,6 +7,7 @@ import com.bcan.switchfi.domain.model.KnownNetwork
 import com.bcan.switchfi.domain.model.SecurityType
 import com.bcan.switchfi.domain.usecase.AddKnownNetworkUseCase
 import com.bcan.switchfi.domain.usecase.RemoveKnownNetworkUseCase
+import com.bcan.switchfi.data.suggestions.WifiSuggestionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,8 @@ class NetworkDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val addKnown: AddKnownNetworkUseCase,
     private val removeKnown: RemoveKnownNetworkUseCase,
-    knownRepo: com.bcan.switchfi.data.known.KnownNetworksRepository
+    knownRepo: com.bcan.switchfi.data.known.KnownNetworksRepository,
+    private val suggestions: WifiSuggestionRepository
 ) : ViewModel() {
     val ssid: String = savedStateHandle.get<String>("ssid") ?: ""
 
@@ -34,6 +36,15 @@ class NetworkDetailViewModel @Inject constructor(
 
     fun removeFromKnown() {
         viewModelScope.launch { removeKnown(ssid) }
+    }
+
+    fun connectViaSuggestion() {
+        if (ssid.isBlank()) return
+        viewModelScope.launch {
+            runCatching {
+                suggestions.addSuggestions(listOf(KnownNetwork(ssid, SecurityType.OPEN, null)))
+            }
+        }
     }
 }
 

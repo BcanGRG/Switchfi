@@ -28,7 +28,6 @@ import com.bcan.switchfi.data.suggestions.WifiSuggestionRepository
 fun NetworkDetailScreen(ssid: String?) {
     val vm: NetworkDetailViewModel = hiltViewModel()
     val isKnown by vm.isKnown.collectAsState()
-    val suggestions: WifiSuggestionRepository = hiltViewModel()
 
     Scaffold(topBar = {
         LargeTopAppBar(title = { Text(text = stringResource(id = R.string.title_network_detail)) })
@@ -42,14 +41,7 @@ fun NetworkDetailScreen(ssid: String?) {
                 if (!isKnown) vm.addToKnown() else vm.removeFromKnown()
             }) { Text(text = if (isKnown) "Remove from Known" else "Add to Known") }
 
-            Button(onClick = {
-                // Suggest connection to OS for this SSID
-                if (vm.ssid.isNotBlank()) {
-                    runCatching {
-                        suggestions.addSuggestions(listOf(KnownNetwork(vm.ssid, SecurityType.OPEN, null)))
-                    }
-                }
-            }) { Text(stringResource(id = R.string.details_connect)) }
+            Button(onClick = { vm.connectViaSuggestion() }) { Text(stringResource(id = R.string.details_connect)) }
         }
     }
 }
