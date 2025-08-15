@@ -10,6 +10,7 @@ import com.bcan.switchfi.data.suggestions.WifiSuggestionRepository
 import com.bcan.switchfi.data.scan.WifiScanner
 import com.bcan.switchfi.data.scan.ScanResultsRepository
 import com.bcan.switchfi.data.scan.WifiStateRepository
+import com.bcan.switchfi.data.scan.ConnectedNetworkRepository
 import com.bcan.switchfi.ui.settings.SettingsRepository
 import dagger.Module
 import dagger.Provides
@@ -59,6 +60,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideWifiStateRepository(app: Application): WifiStateRepository = WifiStateRepository(app)
+
+    @Provides
+    @Singleton
+    fun provideConnectedNetworkRepository(app: Application): ConnectedNetworkRepository = ConnectedNetworkRepository(app)
 }
 
 
