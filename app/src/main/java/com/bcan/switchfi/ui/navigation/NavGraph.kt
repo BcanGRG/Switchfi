@@ -10,7 +10,6 @@ import com.bcan.switchfi.ui.NetworksScreen
 import com.bcan.switchfi.ui.detail.NetworkDetailScreen
 import com.bcan.switchfi.ui.onboarding.OnboardingScreen
 import com.bcan.switchfi.ui.settings.SettingsScreen
-import com.bcan.switchfi.ui.known.KnownNetworksScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -28,14 +27,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Serializable object OnboardingRoute
 @Serializable object NetworksRoute
 @Serializable object SettingsRoute
-@Serializable object KnownNetworksRoute
 
 @Serializable
 data class NetworkDetailRoute(val ssid: String)
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
-    val items = listOf(NetworksRoute, KnownNetworksRoute, SettingsRoute)
+    val items = listOf(NetworksRoute, SettingsRoute)
     Scaffold(
         bottomBar = {
             val backStackEntry by navController.currentBackStackEntryAsState()
@@ -44,7 +42,6 @@ fun AppNavGraph(navController: NavHostController) {
                 items.forEach { route ->
                     val (label, icon) = when (route) {
                         is NetworksRoute -> Pair("Networks", Icons.Default.Home)
-                        is KnownNetworksRoute -> Pair("Known", Icons.Default.Star)
                         is SettingsRoute -> Pair("Settings", Icons.Default.Settings)
                         else -> Pair("", Icons.Default.Home)
                     }
@@ -69,7 +66,6 @@ fun AppNavGraph(navController: NavHostController) {
             }
             composable<NetworksRoute> { NetworksScreen(navController = navController) }
             composable<SettingsRoute> { SettingsScreen() }
-            composable<KnownNetworksRoute> { KnownNetworksScreen() }
             composable<NetworkDetailRoute> { backStackEntry ->
                 val args = backStackEntry.toRoute<NetworkDetailRoute>()
                 NetworkDetailScreen(ssid = args.ssid)

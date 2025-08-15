@@ -62,6 +62,9 @@ import com.bcan.switchfi.data.worker.AutoSwitchWorker
 import com.bcan.switchfi.ui.navigation.NetworkDetailRoute
 import com.bcan.switchfi.data.scan.WifiStateRepository
 import com.bcan.switchfi.data.known.KnownNetworksRepository
+import com.bcan.switchfi.data.scan.ConnectedNetworkRepository
+import com.bcan.switchfi.ui.settings.SettingsRepository
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -86,7 +89,9 @@ class NetworksViewModel @javax.inject.Inject constructor(
     private val scanner: WifiScanner,
     private val scans: ScanResultsRepository,
     private val wifiStateRepo: WifiStateRepository,
-    private val knownRepo: KnownNetworksRepository
+    private val knownRepo: KnownNetworksRepository,
+    private val connectedRepo: ConnectedNetworkRepository,
+    private val settingsRepo: SettingsRepository
 ) : MviViewModel<NetworksContract.State, NetworksContract.Event, NetworksContract.Effect>(
     initialState = NetworksContract.State()
 ) {
@@ -96,6 +101,25 @@ class NetworksViewModel @javax.inject.Inject constructor(
     val knownSsids = knownRepo.knownNetworks
         .map { list -> list.map { it.ssid }.toSet() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptySet())
+
+    init {
+        // Auto-learn: when connected SSID changes and autoLearn enabled, add to known if missing
+        viewModelScope.launch {
+            combine(
+                connectedRepo.observeConnectedWifi(),
+                settingsRepo.autoLearn
+            ) { wifiInfo, autoLearn -> Pair(wifiInfo, autoLearn) }
+                .collect { (wifiInfo, autoLearn) ->
+                    if (!autoLearn) return@collect
+                    val ssid = wifiInfo?.ssid?.trim('"') ?: return@collect
+                    if (ssid.isNotBlank() && !knownSsids.value.contains(ssid)) {
+                        runCatching {
+                            knownRepo.add(com.bcan.switchfi.domain.model.KnownNetwork(ssid, com.bcan.switchfi.domain.model.SecurityType.OPEN, null))
+                        }
+                    }
+                }
+        }
+    }
     override fun onEvent(event: NetworksContract.Event) {
         when (event) {
             NetworksContract.Event.Refresh -> refresh()

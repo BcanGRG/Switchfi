@@ -93,11 +93,12 @@ graph TD
 - [x] Localization (TR/EN)
 - [x] Scan & measure (RSSI) via broadcast flow
 - [x] Bottom navigation (Networks / Known / Settings)
-- [x] Known networks management (basic)
+- [x] Known networks (auto-learn scaffold)
 - [x] Settings (theme, RSSI/hysteresis, language)
 - [x] Network detail screen (add/remove known)
-- [ ] Wi‑Fi Suggestions auto-switch optimization
-- [ ] Auto-learn known networks (from connected SSIDs)
+- [x] Detail connect action (suggest to OS)
+- [ ] Wi‑Fi Suggestions auto-switch optimization & periodic evaluation
+- [ ] Auto-learn known networks (complete, resolve security)
 - [ ] Background periodic evaluation & logging
 - [ ] Tests & CI
 
