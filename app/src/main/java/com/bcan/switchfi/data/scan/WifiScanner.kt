@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.wifi.ScanResult
+import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.core.content.ContextCompat
@@ -51,6 +52,16 @@ class WifiScanner @Inject constructor(
         val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return runCatching { lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) }
             .getOrDefault(false)
+    }
+
+    fun getConfiguredNetworks(): List<WifiConfiguration> {
+        if (!hasScanPermission()) return emptyList()
+        return try {
+            @Suppress("DEPRECATION")
+            wifiManager.configuredNetworks.orEmpty()
+        } catch (_: SecurityException) {
+            emptyList()
+        }
     }
 
     fun rssiToLevel(rssi: Int): Int {

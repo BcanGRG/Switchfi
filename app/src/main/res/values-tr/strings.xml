@@ -13,5 +13,9 @@
     <string name="label_signal_strength">Sinyal</string>
     <string name="label_security">Güvenlik</string>
     <string name="ssid_unknown">Bilinmeyen SSID</string>
+    <string name="details_connect">Bağlan</string>
+    <string name="btn_turn_on_wifi">Wi‑Fi\'yi Aç</string>
+    <string name="msg_enable_location">Konum servislerini etkinleştirin</string>
+    <string name="msg_no_permission">Wi‑Fi izni gerekli</string>
 </resources>
 

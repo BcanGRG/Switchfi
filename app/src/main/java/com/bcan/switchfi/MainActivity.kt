@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,13 +21,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themeVm = hiltViewModel<com.bcan.switchfi.ui.theme.ThemeViewModel>()
             val localeVm = hiltViewModel<com.bcan.switchfi.ui.i18n.LocaleViewModel>()
+            val isDark = themeVm.isDark.collectAsState().value
             val localeTag = localeVm.localeTag.collectAsState().value
-            androidx.compose.runtime.SideEffect {
+            
+            // Apply locale changes immediately
+            androidx.compose.runtime.LaunchedEffect(localeTag) {
                 AppCompatDelegate.setApplicationLocales(
                     androidx.core.os.LocaleListCompat.forLanguageTags(localeTag ?: "")
                 )
             }
-            SwitchfiTheme(darkTheme = themeVm.isDark.collectAsState().value) {
+            
+            SwitchfiTheme(darkTheme = isDark) {
                 val navController = rememberNavController()
                 AppNavGraph(navController)
             }
